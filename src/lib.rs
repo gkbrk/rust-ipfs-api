@@ -8,6 +8,7 @@ extern crate reqwest;
 extern crate serde_json;
 extern crate serde;
 #[macro_use] extern crate serde_derive;
+extern crate base64;
 
 use std::io::Read;
 use std::io::{BufReader, BufRead};
@@ -17,11 +18,18 @@ pub struct IpfsApi {
     port: u16
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
+struct JsonPubSubMessage {
+    data: String,
+    from: String,
+    seqno: String
+}
+
+#[derive(Debug)]
 pub struct PubSubMessage {
-    pub data: Option<String>,
-    pub from: Option<String>,
-    pub seqno: Option<String>
+    pub data: Option<Vec<u8>>,
+    pub from: Option<Vec<u8>>,
+    pub seqno: Option<Vec<u8>>
 }
 
 /// The main interface of the library
@@ -76,9 +84,16 @@ impl IpfsApi {
         let messages = BufReader::new(resp).lines()
             .filter(|x|x.is_ok())
             .map(|x|x.unwrap())
-            .map(|x|serde_json::from_str(&x))
+            .map(|x|serde_json::from_str::<JsonPubSubMessage>(&x))
             .filter(|x|x.is_ok())
-            .map(|x|x.unwrap());
+            .map(|x|x.unwrap())
+            .map(|x| {
+                PubSubMessage {
+                    from: base64::decode(&x.from).ok(),
+                    seqno: base64::decode(&x.seqno).ok(),
+                    data: base64::decode(&x.data).ok()
+                }
+            });
 
         Ok(messages)
     }
