@@ -15,6 +15,7 @@ use std::io::Read;
 
 mod pubsub;
 mod ipns;
+mod object;
 
 pub struct IpfsApi {
     server: String,
