@@ -56,3 +56,18 @@ impl IpfsApi {
         Ok(resp.bytes().filter(|x|x.is_ok()).map(|x|x.unwrap()))
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use IpfsApi;
+    #[test]
+    fn test_cat() {
+        let api = IpfsApi::new("127.0.0.1", 5001);
+        // Hello world object
+        let bytes = api.cat("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
+        let data = String::from_utf8(bytes.collect()).unwrap();
+
+        assert_eq!("Hello World\n", &data);
+    }
+}
