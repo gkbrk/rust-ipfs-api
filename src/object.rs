@@ -33,7 +33,7 @@ mod tests {
     use IpfsApi;
     use super::*;
     #[test]
-    fn test_cat() {
+    fn test_object_stats() {
         let api = IpfsApi::new("127.0.0.1", 5001);
         // Hello world object
         let stats = api.object_stats("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
