@@ -25,7 +25,12 @@ impl IpfsApi {
         let url = format!("http://{}:{}/api/v0/name/resolve?arg={}", self.server, self.port, name);
         let resp = reqwest::get(&url)?;
         let resp: Value = serde_json::from_reader(resp)?;
-        Ok(resp["Path"].to_string())
+        
+        if resp["Path"].is_string() {
+            Ok(resp["Path"].as_str().unwrap().into())
+        } else {
+            Err("Key error".into())
+        }
     }
 
     /// Publish an IPFS hash in IPNS.
