@@ -26,8 +26,8 @@ The code gets the content of the IPFS hash and displays "Hello World".
 * Getting file contents from IPFS (cat)
 * Pubsub
 * IPNS publish and resolve
+* Object/Hash stats (size, etc.)
 
 ## Planned Functionality
 
 * Pinning and unpinning files
-* File/Hash stats (size, etc.)

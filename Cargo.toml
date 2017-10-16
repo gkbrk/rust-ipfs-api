@@ -1,6 +1,6 @@
 [package]
 name = "ipfsapi"
-version = "0.1.1"
+version = "0.1.2"
 description = "Crate for interfacing with the IPFS api"
 license = "MIT"
 keywords = ["ipfs", "api", "p2p"]
