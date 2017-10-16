@@ -29,7 +29,7 @@ pub struct IpfsApi {
 impl IpfsApi {
     /// Creates a new instance of the API
     ///
-    /// ```
+    /// ```rust,ignore
     /// let api = IpfsApi::new("127.0.0.1", 5001);
     /// ```
     pub fn new(server: &str, port: u16) -> IpfsApi {
@@ -43,7 +43,7 @@ impl IpfsApi {
     /// hash and returns an iterator of bytes. The result can be streamed, if
     /// the file is large.
     ///
-    /// ```
+    /// ```rust,ignore
     /// let api = IpfsApi::new("127.0.0.1", 5001);
     ///
     /// let hello = api.cat("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u")?;
