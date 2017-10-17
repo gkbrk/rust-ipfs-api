@@ -51,7 +51,7 @@ impl IpfsApi {
             .append_pair("arg", hash)
             .append_pair("recursive", &recursive.to_string())
             .append_pair("progress", &progress.to_string());
-        let resp = reqwest::get(url)?;
+        let resp = reqwest::get(url)?.error_for_status()?;
         Ok(serde_json::from_reader(resp)?)
     }
 
@@ -62,7 +62,7 @@ impl IpfsApi {
         url.query_pairs_mut()
             .append_pair("arg", hash)
             .append_pair("recursive", &recursive.to_string());
-        let resp = reqwest::get(url)?;
+        let resp = reqwest::get(url)?.error_for_status()?;
         Ok(serde_json::from_reader(resp)?)
     }
 
@@ -71,10 +71,7 @@ impl IpfsApi {
     pub fn pin_ls(&self) -> Result<PinList> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/ls");
-        // url.query_pairs_mut()
-        //     .append_pair("arg", hash);
-        //     .append_pair("recursive", &recursive.to_string());
-        let resp = reqwest::get(url)?;
+        let resp = reqwest::get(url)?.error_for_status()?;
         Ok(serde_json::from_reader(resp)?)
     }
 }
@@ -105,15 +102,13 @@ mod tests {
 
         // Add pin
         let api = IpfsApi::new("127.0.0.1", 5001);
-        let resp = api.pin_add(obj, true, true);
-        // println!("Add response: {:#?}", resp);
+        let resp = api.pin_add(obj, true, false);
+        println!("Add response: {:#?}", resp);
         let desired = PinAddResponse {
             pins: vec![obj.into()],
             progress: None,
         };
         assert_eq!(resp.unwrap(), desired);
-
-
 
         // List pin to make sure it's present.
         let api = IpfsApi::new("127.0.0.1", 5001);

@@ -26,7 +26,7 @@ impl IpfsApi {
     /// of a hash.
     pub fn object_stats(&self, hash: &str) -> Result<ObjectStats> {
         let url = format!("http://{}:{}/api/v0/object/stat?arg={}", self.server, self.port, hash);
-        let resp = reqwest::get(&url)?;
+        let resp = reqwest::get(&url)?.error_for_status()?;
         Ok(serde_json::from_reader(resp)?)
     }
 }

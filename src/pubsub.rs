@@ -56,7 +56,7 @@ impl IpfsApi {
     /// ```
     pub fn pubsub_subscribe(&self, channel: &str) -> Result<impl Iterator<Item=PubSubMessage>> {
         let url = format!("http://{}:{}/api/v0/pubsub/sub?arg={}&discover=true", self.server, self.port, channel);
-        let resp = reqwest::get(&url)?;
+        let resp = reqwest::get(&url)?.error_for_status()?;
 
         let messages = BufReader::new(resp).lines()
             .filter(|x|x.is_ok())
@@ -80,7 +80,7 @@ impl IpfsApi {
     /// for peer-to-peer communication and dynamic apps over IPFS.
     pub fn pubsub_publish(&self, channel: &str, data: &str) -> Result<()> {
         let url = format!("http://{}:{}/api/v0/pubsub/pub?arg={}&arg={}", self.server, self.port, channel, data);
-        let _resp = reqwest::get(&url)?;
+        let _resp = reqwest::get(&url)?.error_for_status()?;
         Ok(())
     }
 }

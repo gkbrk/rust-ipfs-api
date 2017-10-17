@@ -24,7 +24,7 @@ impl IpfsApi {
     /// Get the version from the IPFS daemon.
     pub fn version(&self) -> Result<IpfsVersion> {
         let url = format!("http://{}:{}/api/v0/version", self.server, self.port);
-        let resp = reqwest::get(&url)?;
+        let resp = reqwest::get(&url)?.error_for_status()?;
         Ok(serde_json::from_reader(resp)?)
     }
 }
