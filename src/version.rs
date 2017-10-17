@@ -1,7 +1,7 @@
 use IpfsApi;
 
-extern crate reqwest;
-extern crate serde_json;
+use reqwest;
+use serde_json;
 
 error_chain! {
     foreign_links {
