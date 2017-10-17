@@ -19,6 +19,7 @@ mod ipns;
 mod object;
 mod version;
 
+#[derive(Clone, PartialEq, Hash)]
 pub struct IpfsApi {
     server: String,
     port: u16
