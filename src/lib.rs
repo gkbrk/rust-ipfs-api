@@ -15,7 +15,7 @@ mod cat;
 mod ipns;
 mod object;
 mod pin;
-mod pubsub;
+pub mod pubsub;
 mod version;
 
 pub struct IpfsApi {
