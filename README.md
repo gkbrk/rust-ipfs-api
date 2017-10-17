@@ -28,7 +28,6 @@ The code gets the content of the IPFS hash and displays "Hello World".
 * IPNS publish and resolve
 * Object/Hash stats (size, etc.)
 * Version information of the daemon
+* Pinning and unpinning files
 
 ## Planned Functionality
-
-* Pinning and unpinning files
