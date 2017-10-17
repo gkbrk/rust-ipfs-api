@@ -10,6 +10,7 @@ error_chain! {
     foreign_links {
         Reqwest(reqwest::Error);
         JsonDecode(serde_json::Error);
+        UrlParseError(reqwest::UrlError);
     }
 }
 
@@ -55,8 +56,12 @@ impl IpfsApi {
     /// }
     /// ```
     pub fn pubsub_subscribe(&self, channel: &str) -> Result<impl Iterator<Item=PubSubMessage>> {
-        let url = format!("http://{}:{}/api/v0/pubsub/sub?arg={}&discover=true", self.server, self.port, channel);
-        let resp = reqwest::get(&url)?;
+        let mut url = self.get_url()?;
+        url.set_path("api/v0/pubsub/sub");
+        url.query_pairs_mut()
+            .append_pair("arg", channel)
+            .append_pair("discover", "true");
+        let resp = reqwest::get(url)?;
 
         let messages = BufReader::new(resp).lines()
             .filter(|x|x.is_ok())
@@ -79,8 +84,12 @@ impl IpfsApi {
     /// This function sends a data packet to a channel/topic. It can be used
     /// for peer-to-peer communication and dynamic apps over IPFS.
     pub fn pubsub_publish(&self, channel: &str, data: &str) -> Result<()> {
-        let url = format!("http://{}:{}/api/v0/pubsub/pub?arg={}&arg={}", self.server, self.port, channel, data);
-        let _resp = reqwest::get(&url)?;
+        let mut url = self.get_url()?;
+        url.set_path("api/v0/pubsub/pub");
+        url.query_pairs_mut()
+            .append_pair("arg", channel)
+            .append_pair("arg", data);
+        let _resp = reqwest::get(url)?;
         Ok(())
     }
 }
