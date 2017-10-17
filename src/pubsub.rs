@@ -23,9 +23,9 @@ struct JsonPubSubMessage {
 
 #[derive(Debug)]
 pub struct PubSubMessage {
-    data: Option<Vec<u8>>,
-    from: Option<Vec<u8>>,
-    seqno: Option<Vec<u8>>
+    pub data: Option<Vec<u8>>,
+    pub from: Option<Vec<u8>>,
+    pub seqno: Option<Vec<u8>>
 }
 
 impl PubSubMessage {

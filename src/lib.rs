@@ -18,6 +18,7 @@ mod pin;
 pub mod pubsub;
 mod version;
 
+#[derive(Clone, PartialEq, Hash, Debug)]
 pub struct IpfsApi {
     server: String,
     port: u16

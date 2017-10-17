@@ -13,8 +13,12 @@ error_chain! {
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
 pub struct ObjectStats {
-    hash: String,
-    cumulative_size: u64
+    pub hash: String,
+    pub num_links: u64,
+    pub block_size: u64,
+    pub links_size: u64,
+    pub data_size: u64,
+    pub cumulative_size: u64
 }
 
 impl IpfsApi {
@@ -39,6 +43,10 @@ mod tests {
         let stats = api.object_stats("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
         let desired = ObjectStats {
             hash: "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u".to_string(),
+            num_links: 0,
+            block_size: 20,
+            links_size: 2,
+            data_size: 18,
             cumulative_size: 20,
         };
 
