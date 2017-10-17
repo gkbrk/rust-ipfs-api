@@ -13,12 +13,12 @@ error_chain! {
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
 pub struct ObjectStats {
-    hash: String,
-    num_links: u64,
-    block_size: u64,
-    links_size: u64,
-    data_size: u64,
-    cumulative_size: u64
+    pub hash: String,
+    pub num_links: u64,
+    pub block_size: u64,
+    pub links_size: u64,
+    pub data_size: u64,
+    pub cumulative_size: u64
 }
 
 impl IpfsApi {

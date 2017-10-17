@@ -13,11 +13,11 @@ error_chain! {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all="PascalCase")]
 pub struct IpfsVersion {
-    version: String,
-    commit: String,
-    repo: String,
-    system: String,
-    golang: String
+    pub version: String,
+    pub commit: String,
+    pub repo: String,
+    pub system: String,
+    pub golang: String
 }
 
 impl IpfsApi {

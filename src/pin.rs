@@ -15,27 +15,27 @@ error_chain! {
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
 pub struct PinAddResponse {
-    pins: Vec<String>,
-    progress: Option<u64>
+    pub pins: Vec<String>,
+    pub progress: Option<u64>
 }
 
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
 pub struct PinRmResponse {
-    pins: Vec<String>
+    pub pins: Vec<String>
 }
 
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 pub struct PinType {
     #[serde(rename = "Type")]
-    objtype: String,
+    pub objtype: String,
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(rename_all="PascalCase")]
 pub struct PinList {
     // keys: Vec<String>
-    keys: HashMap<String, PinType>
+    pub keys: HashMap<String, PinType>
 }
 
 impl IpfsApi {
@@ -82,7 +82,6 @@ impl IpfsApi {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
     use IpfsApi;
     use super::*;
 
