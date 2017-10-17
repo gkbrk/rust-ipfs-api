@@ -2,9 +2,9 @@ use std::io::{BufReader, BufRead};
 
 use IpfsApi;
 
-extern crate reqwest;
-extern crate serde_json;
-extern crate base64;
+use reqwest;
+use serde_json;
+use base64;
 
 error_chain! {
     foreign_links {
@@ -20,6 +20,7 @@ struct JsonPubSubMessage {
     seqno: String
 }
 
+#[derive(Debug)]
 pub struct PubSubMessage {
     data: Option<Vec<u8>>,
     from: Option<Vec<u8>>,
@@ -46,7 +47,7 @@ impl IpfsApi {
     /// sent to it. It can be used for peer-to-peer communication and dynamic
     /// apps over IPFS.
     ///
-    /// ```
+    /// ```rust,ignore
     /// let api = IpfsApi::new("127.0.0.1", 5001);
     ///
     /// for message in api.pubsub_subscribe("chat")? {

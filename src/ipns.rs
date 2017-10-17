@@ -2,8 +2,8 @@ use IpfsApi;
 
 use serde_json::Value;
 
-extern crate reqwest;
-extern crate serde_json;
+use reqwest;
+use serde_json;
 
 error_chain! {
     foreign_links {
@@ -15,7 +15,7 @@ error_chain! {
 impl IpfsApi {
     /// Resolve an IPNS hash or a domain name
     ///
-    /// ```
+    /// ```rust,ignore
     /// let api = IpfsApi::new("127.0.0.1", 5001);
     /// let hash = api.name_resolve("gkbrk.com");
     ///
