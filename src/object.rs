@@ -59,17 +59,14 @@ impl IpfsApi {
 #[cfg(test)]
 mod tests {
     use IpfsApi;
-    use super::*;
+    
     #[test]
     fn test_object_stats() {
         let api = IpfsApi::new("127.0.0.1", 5001);
         // Hello world object
         let stats = api.object_stats("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
-        let desired = ObjectStats {
-            hash: "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u".to_string(),
-            cumulative_size: 20,
-        };
-
-        assert_eq!(stats, desired);
+        
+        assert_eq!(stats.hash(), "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u".to_string());
+        assert_eq!(stats.cumulative_size(), 20);
     }
 }

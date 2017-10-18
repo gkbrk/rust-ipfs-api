@@ -36,13 +36,24 @@ impl IpfsApi {
 #[cfg(test)]
 mod tests {
     use IpfsApi;
+
     #[test]
-    fn test_cat() {
+    fn test_cat_bytes() {
         let api = IpfsApi::new("127.0.0.1", 5001);
+
         // Hello world object
         let bytes = api.cat("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
-        let data = String::from_utf8(bytes.collect()).unwrap();
 
-        assert_eq!("Hello World\n", &data);
+        assert_eq!("Hello World\n".as_bytes().to_vec(), bytes.collect::<Vec<u8>>());
+    }
+
+    #[test]
+    fn test_cat_string() {
+        let api = IpfsApi::new("127.0.0.1", 5001);
+
+        let bytes = api.cat("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u").unwrap();
+        let string = String::from_utf8(bytes.collect()).unwrap();
+
+        assert_eq!("Hello World\n", &string);
     }
 }

@@ -14,7 +14,7 @@ extern crate base64;
 mod cat;
 mod ipns;
 mod object;
-mod pin;
+pub mod pin;
 pub mod pubsub;
 mod version;
 

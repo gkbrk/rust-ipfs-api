@@ -1,6 +1,5 @@
 use IpfsApi;
 
-use std::collections::HashMap;
 use reqwest;
 use serde_json;
 
@@ -14,28 +13,20 @@ error_chain! {
 
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
-pub struct PinAddResponse {
-    pins: Vec<String>,
-    progress: Option<u64>
-}
-
-#[derive(Deserialize, Debug, PartialEq, Hash)]
-#[serde(rename_all="PascalCase")]
-pub struct PinRmResponse {
+pub struct PinResponse {
     pins: Vec<String>
 }
 
-#[derive(Deserialize, Debug, PartialEq, Hash)]
-pub struct PinType {
-    #[serde(rename = "Type")]
-    objtype: String,
+#[derive(PartialEq)]
+pub enum PinType {
+    Direct,
+    Indirect,
+    Recursive
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
-#[serde(rename_all="PascalCase")]
-pub struct PinList {
-    // keys: Vec<String>
-    keys: HashMap<String, PinType>
+pub struct PinnedHash {
+    pub hash: String,
+    pub pin_type: PinType
 }
 
 impl IpfsApi {
@@ -44,19 +35,19 @@ impl IpfsApi {
     /// that one depends on.
     /// If 'progress' is true, it will return a percentage(?) progress
     /// if the object has not been already pinned, or None if it has.
-    pub fn pin_add(&self, hash: &str, recursive: bool, progress: bool) -> Result<PinAddResponse> {
+    pub fn pin_add(&self, hash: &str, recursive: bool) -> Result<PinResponse> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/add");
         url.query_pairs_mut()
             .append_pair("arg", hash)
             .append_pair("recursive", &recursive.to_string())
-            .append_pair("progress", &progress.to_string());
+            .append_pair("progress", "false");
         let resp = reqwest::get(url)?;
         Ok(serde_json::from_reader(resp)?)
     }
 
     /// Unpin the given object.
-    pub fn pin_rm(&self, hash: &str, recursive: bool) -> Result<PinRmResponse> {
+    pub fn pin_rm(&self, hash: &str, recursive: bool) -> Result<PinResponse> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/rm");
         url.query_pairs_mut()
@@ -68,68 +59,58 @@ impl IpfsApi {
 
 
     /// List pinned objects.
-    pub fn pin_ls(&self) -> Result<PinList> {
+    pub fn pin_list(&self) -> Result<Vec<PinnedHash>> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/ls");
-        // url.query_pairs_mut()
-        //     .append_pair("arg", hash);
-        //     .append_pair("recursive", &recursive.to_string());
         let resp = reqwest::get(url)?;
-        Ok(serde_json::from_reader(resp)?)
+        let json_resp: serde_json::Value = serde_json::from_reader(resp)?;
+
+        let mut hashes = Vec::new();
+
+        let keys = json_resp.get("Keys").ok_or("")?.as_object().ok_or("")?;
+
+        for (key, value) in keys.iter() {
+            hashes.push(PinnedHash {
+                hash: key.clone(),
+                pin_type: match &value.get("Type").ok_or("")?.as_str().ok_or("")? {
+                    &"direct" => PinType::Direct,
+                    &"indirect" => PinType::Indirect,
+                    &"recursive" => PinType::Recursive,
+                    _ => PinType::Direct
+                }
+            });
+        }
+        
+        Ok(hashes)
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
     use IpfsApi;
-    use super::*;
+    use pin::PinType;
 
-    /// Add a pin,  list itthen remove it.
-    ///
-    /// This seems to alternately succeed and fail;
-    /// half the time when you try to add a pi it doesn't
-    /// return a correct value for the list of pins???
-    ///
-    /// Here's what it returns if the object is not pinned,
-    /// apparently:
-    /// > curl "http://localhost:5001/api/v0/pin/add?arg=QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u&recursive=true&progress=true"
-    /// {"Pins":null,"Progress":1}
-    /// {"Pins":["QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u"]}
-    ///
-    /// No idea how to make reqwest make something sensible of this.
+    // Add a pin, list it and then remove it.
     #[test]
     fn test_pin_full() {
+        let api = IpfsApi::new("127.0.0.1", 5001);
+        
         // Hello world object
-        let obj = "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u";
+        let hello = "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u";
+
+        // Unpin everything first
+        for pin in api.pin_list().unwrap() {
+            if pin.pin_type == PinType::Direct || pin.pin_type == PinType::Recursive {
+                api.pin_rm(&pin.hash, true);
+            }
+        }
 
         // Add pin
-        let api = IpfsApi::new("127.0.0.1", 5001);
-        let resp = api.pin_add(obj, true, true);
-        // println!("Add response: {:#?}", resp);
-        let desired = PinAddResponse {
-            pins: vec![obj.into()],
-            progress: None,
-        };
-        assert_eq!(resp.unwrap(), desired);
-
-
-
-        // List pin to make sure it's present.
-        let api = IpfsApi::new("127.0.0.1", 5001);
-        let resp = api.pin_ls();
-        // println!("Ls response: {:#?}", resp);
-        assert!(resp.unwrap().keys.contains_key(obj));
-        // assert_eq!(resp.unwrap(), desired);
-
-        // Remove pin
-        let api = IpfsApi::new("127.0.0.1", 5001);
-        let resp = api.pin_rm(obj, true);
-        // println!("Rm response: {:#?}", resp);
-        let desired = PinRmResponse {
-            pins: vec![obj.into()],
-        };
-        assert_eq!(resp.unwrap(), desired);
+        let resp = api.pin_add(hello, false).unwrap();
+        
+        // Check if pin is added
+        assert_eq!(resp.pins.len(), 1);
+        assert_eq!(resp.pins[0], "QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u".to_string());
     }
 }
