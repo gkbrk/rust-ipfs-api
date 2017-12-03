@@ -17,6 +17,7 @@ mod object;
 pub mod pin;
 pub mod pubsub;
 mod version;
+mod shutdown;
 
 pub struct IpfsApi {
     server: String,
