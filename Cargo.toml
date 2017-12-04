@@ -1,6 +1,6 @@
 [package]
 name = "ipfsapi"
-version = "0.1.6"
+version = "0.1.7"
 description = "Crate for interfacing with the IPFS api"
 license = "MIT"
 keywords = ["ipfs", "api", "p2p"]
@@ -8,6 +8,7 @@ categories = ["api-bindings"]
 repository = "https://github.com/gkbrk/rust-ipfs-api"
 documentation = "https://docs.rs/ipfsapi"
 authors = ["Gökberk Yaltıraklı <webdosusb@gmail.com>"]
+readme = "README.md"
 
 [dependencies]
 reqwest = "0.8"
