@@ -9,7 +9,7 @@ This library allows you to use the local IPFS daemon from Rust.
 ## Usage
 ```toml
 [dependencies]
-ipfsapi = "0.1"
+ipfsapi = "0.2"
 ```
 
 ## Examples
