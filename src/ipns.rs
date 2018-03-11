@@ -4,13 +4,8 @@ use serde_json::Value;
 
 use reqwest;
 use serde_json;
-
-error_chain! {
-    foreign_links {
-        Reqwest(reqwest::Error);
-        JsonDecode(serde_json::Error);
-    }
-}
+use failure::err_msg;
+use failure::Error;
 
 impl IpfsApi {
     /// Resolve an IPNS hash or a domain name
@@ -21,7 +16,7 @@ impl IpfsApi {
     ///
     /// println!("{}", hash);
     /// ```
-    pub fn name_resolve(&self, name: &str) -> Result<String> {
+    pub fn name_resolve(&self, name: &str) -> Result<String, Error> {
         let url = format!("http://{}:{}/api/v0/name/resolve?arg={}", self.server, self.port, name);
         let resp = reqwest::get(&url)?;
         let resp: Value = serde_json::from_reader(resp)?;
@@ -29,12 +24,12 @@ impl IpfsApi {
         if resp["Path"].is_string() {
             Ok(resp["Path"].as_str().unwrap().into())
         } else {
-            Err("Key error".into())
+            Err(err_msg("Key error"))
         }
     }
 
     /// Publish an IPFS hash in IPNS.
-    pub fn name_publish(&self, hash: &str) -> Result<()> {
+    pub fn name_publish(&self, hash: &str) -> Result<(), Error> {
         let url = format!("http://{}:{}/api/v0/name/publish?arg={}", self.server, self.port, hash);
         let _resp = reqwest::get(&url)?;
         Ok(())

@@ -2,14 +2,7 @@ use IpfsApi;
 
 use reqwest;
 use serde_json;
-
-error_chain! {
-    foreign_links {
-        Reqwest(reqwest::Error);
-        JsonDecode(serde_json::Error);
-        UrlParseError(reqwest::UrlError);
-    }
-}
+use failure::{Error, err_msg};
 
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
@@ -35,7 +28,7 @@ impl IpfsApi {
     /// that one depends on.
     /// If 'progress' is true, it will return a percentage(?) progress
     /// if the object has not been already pinned, or None if it has.
-    pub fn pin_add(&self, hash: &str, recursive: bool) -> Result<PinResponse> {
+    pub fn pin_add(&self, hash: &str, recursive: bool) -> Result<PinResponse, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/add");
         url.query_pairs_mut()
@@ -47,7 +40,7 @@ impl IpfsApi {
     }
 
     /// Unpin the given object.
-    pub fn pin_rm(&self, hash: &str, recursive: bool) -> Result<PinResponse> {
+    pub fn pin_rm(&self, hash: &str, recursive: bool) -> Result<PinResponse, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/rm");
         url.query_pairs_mut()
@@ -59,7 +52,7 @@ impl IpfsApi {
 
 
     /// List pinned objects.
-    pub fn pin_list(&self) -> Result<Vec<PinnedHash>> {
+    pub fn pin_list(&self) -> Result<Vec<PinnedHash>, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/ls");
         let resp = reqwest::get(url)?;
@@ -67,12 +60,12 @@ impl IpfsApi {
 
         let mut hashes = Vec::new();
 
-        let keys = json_resp.get("Keys").ok_or("")?.as_object().ok_or("")?;
+        let keys = json_resp.get("Keys").ok_or(err_msg(""))?.as_object().ok_or(err_msg(""))?;
 
         for (key, value) in keys.iter() {
             hashes.push(PinnedHash {
                 hash: key.clone(),
-                pin_type: match &value.get("Type").ok_or("")?.as_str().ok_or("")? {
+                pin_type: match &value.get("Type").ok_or(err_msg(""))?.as_str().ok_or(err_msg(""))? {
                     &"direct" => PinType::Direct,
                     &"indirect" => PinType::Indirect,
                     &"recursive" => PinType::Recursive,

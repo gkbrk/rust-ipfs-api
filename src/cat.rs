@@ -3,13 +3,7 @@ use IpfsApi;
 use std::io::Read;
 
 use reqwest;
-
-error_chain! {
-    foreign_links {
-        Reqwest(reqwest::Error);
-        UrlParseError(reqwest::UrlError);
-    }
-}
+use failure::Error;
 
 impl IpfsApi {
     /// Retrieves the contents of a file from the IPFS network. Takes a
@@ -23,7 +17,7 @@ impl IpfsApi {
     /// let hello_string = String::from_utf8(hello.collect())?;
     /// println!("{}", hello_string);
     /// ```
-    pub fn cat(&self, hash: &str) -> Result<impl Iterator<Item=u8>> {
+    pub fn cat(&self, hash: &str) -> Result<impl Iterator<Item=u8>, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/cat");
         url.query_pairs_mut()

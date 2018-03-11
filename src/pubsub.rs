@@ -5,14 +5,7 @@ use IpfsApi;
 use reqwest;
 use serde_json;
 use base64;
-
-error_chain! {
-    foreign_links {
-        Reqwest(reqwest::Error);
-        JsonDecode(serde_json::Error);
-        UrlParseError(reqwest::UrlError);
-    }
-}
+use failure::Error;
 
 #[derive(Deserialize)]
 struct JsonPubSubMessage {
@@ -55,7 +48,7 @@ impl IpfsApi {
     ///     println!("{:?}", message);
     /// }
     /// ```
-    pub fn pubsub_subscribe(&self, channel: &str) -> Result<impl Iterator<Item=PubSubMessage>> {
+    pub fn pubsub_subscribe(&self, channel: &str) -> Result<impl Iterator<Item=PubSubMessage>, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pubsub/sub");
         url.query_pairs_mut()
@@ -83,7 +76,7 @@ impl IpfsApi {
     /// Sends a p2p message to a channel
     /// This function sends a data packet to a channel/topic. It can be used
     /// for peer-to-peer communication and dynamic apps over IPFS.
-    pub fn pubsub_publish(&self, channel: &str, data: &str) -> Result<()> {
+    pub fn pubsub_publish(&self, channel: &str, data: &str) -> Result<(), Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pubsub/pub");
         url.query_pairs_mut()
