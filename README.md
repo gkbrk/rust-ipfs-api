@@ -49,5 +49,4 @@ for message in messages {
 * Version information of the daemon
 * Pinning and unpinning files
 * Shut down IPFS daemon
-
-## Planned Functionality
+* Get and put blocks
