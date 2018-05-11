@@ -1,5 +1,3 @@
-#![feature(conservative_impl_trait)]
-
 //! # ipfsapi
 //! This is a crate for interfacing with the local IPFS API. It allows you to
 //! read and write data to the IPFS network.
@@ -19,6 +17,7 @@ pub mod pubsub;
 mod version;
 mod shutdown;
 mod log;
+mod block;
 
 pub struct IpfsApi {
     server: String,

@@ -95,7 +95,7 @@ mod tests {
         // Unpin everything first
         for pin in api.pin_list().unwrap() {
             if pin.pin_type == PinType::Direct || pin.pin_type == PinType::Recursive {
-                api.pin_rm(&pin.hash, true);
+                api.pin_rm(&pin.hash, true).unwrap();
             }
         }
 
