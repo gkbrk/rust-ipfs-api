@@ -9,6 +9,7 @@ extern crate serde;
 extern crate failure;
 extern crate base64;
 
+mod add;
 mod cat;
 mod ipns;
 mod object;
@@ -18,6 +19,7 @@ mod version;
 mod shutdown;
 mod log;
 mod block;
+pub mod mfs;
 
 pub struct IpfsApi {
     server: String,
