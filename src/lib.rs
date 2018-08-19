@@ -9,6 +9,7 @@ extern crate serde;
 extern crate failure;
 extern crate base64;
 
+mod add;
 mod cat;
 mod ipns;
 mod object;
