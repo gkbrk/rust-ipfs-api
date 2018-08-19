@@ -19,6 +19,7 @@ mod version;
 mod shutdown;
 mod log;
 mod block;
+pub mod mfs;
 
 pub struct IpfsApi {
     server: String,
