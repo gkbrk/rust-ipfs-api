@@ -11,7 +11,7 @@ authors = ["Gökberk Yaltıraklı <webdosusb@gmail.com>"]
 readme = "README.md"
 
 [dependencies]
-reqwest = "0.8"
+reqwest = "0.9"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
