@@ -34,7 +34,8 @@ impl IpfsApi {
         url.query_pairs_mut()
             .append_pair("arg", hash);
 
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
         Ok(resp.bytes().filter(|x|x.is_ok()).map(|x|x.unwrap()))
     }
 }

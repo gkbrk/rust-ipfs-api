@@ -13,7 +13,8 @@ impl IpfsApi {
     pub fn log_tail(&self) -> Result<impl Iterator<Item=Value>, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/log/tail");
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
 
         let messages = BufReader::new(resp).lines()
             .filter(|x|x.is_ok())
