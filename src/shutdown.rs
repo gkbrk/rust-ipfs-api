@@ -9,7 +9,8 @@ impl IpfsApi {
     pub fn shutdown(&self) -> Result<(), Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/shutdown");
-        let _resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let _resp = client.post(url).send()?;
         Ok(())
     }
 }

@@ -44,7 +44,8 @@ impl IpfsApi {
     /// of a hash.
     pub fn object_stats(&self, hash: &str) -> Result<ObjectStats, Error> {
         let url = format!("http://{}:{}/api/v0/object/stat?arg={}", self.server, self.port, hash);
-        let resp = reqwest::get(&url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(&url).send()?;
         Ok(serde_json::from_reader(resp)?)
     }
 }

@@ -54,7 +54,8 @@ impl IpfsApi {
         url.query_pairs_mut()
             .append_pair("arg", channel)
             .append_pair("discover", "true");
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
 
         let messages = BufReader::new(resp).lines()
             .filter(|x|x.is_ok())
@@ -82,7 +83,8 @@ impl IpfsApi {
         url.query_pairs_mut()
             .append_pair("arg", channel)
             .append_pair("arg", data);
-        let _resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let _resp = client.post(url).send()?;
         Ok(())
     }
 }

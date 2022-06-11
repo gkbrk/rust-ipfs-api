@@ -35,7 +35,8 @@ impl IpfsApi {
             .append_pair("arg", hash)
             .append_pair("recursive", &recursive.to_string())
             .append_pair("progress", "false");
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
         Ok(serde_json::from_reader(resp)?)
     }
 
@@ -46,7 +47,8 @@ impl IpfsApi {
         url.query_pairs_mut()
             .append_pair("arg", hash)
             .append_pair("recursive", &recursive.to_string());
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
         Ok(serde_json::from_reader(resp)?)
     }
 
@@ -55,7 +57,8 @@ impl IpfsApi {
     pub fn pin_list(&self) -> Result<Vec<PinnedHash>, Error> {
         let mut url = self.get_url()?;
         url.set_path("api/v0/pin/ls");
-        let resp = reqwest::get(url)?;
+        let client = reqwest::Client::new();
+        let resp = client.post(url).send()?;
         let json_resp: serde_json::Value = serde_json::from_reader(resp)?;
 
         let mut hashes = Vec::new();
