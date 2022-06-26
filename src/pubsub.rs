@@ -1,11 +1,6 @@
 use std::io::{BufReader, BufRead};
 
-use IpfsApi;
-
-use reqwest;
 use serde_json;
-use base64;
-use failure::Error;
 
 #[derive(Deserialize)]
 struct JsonPubSubMessage {

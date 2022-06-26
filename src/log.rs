@@ -1,11 +1,7 @@
 use std::io::{BufReader, BufRead};
 
-use IpfsApi;
-
-use reqwest;
 use serde_json;
 use serde_json::Value;
-use failure::Error;
 
 impl IpfsApi {
     /// Returns an iterator to the log stream. Since the log entries are

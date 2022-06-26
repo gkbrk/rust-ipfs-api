@@ -1,8 +1,3 @@
-use IpfsApi;
-
-use reqwest;
-use failure::Error;
-
 use std::io::Read;
 
 #[derive(Deserialize)]

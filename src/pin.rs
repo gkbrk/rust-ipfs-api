@@ -1,8 +1,4 @@
-use IpfsApi;
-
-use reqwest;
 use serde_json;
-use failure::{Error, err_msg};
 
 #[derive(Deserialize, Debug, PartialEq, Hash)]
 #[serde(rename_all="PascalCase")]
