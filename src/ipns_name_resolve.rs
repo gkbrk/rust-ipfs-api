@@ -1,8 +1,7 @@
 use crate::str_error::StrError;
 use crate::IpfsApi;
-use serde_json;
+use serde_json::Value;
 use std::error::Error;
-use ureq;
 
 impl IpfsApi {
     /// Resolve an IPNS hash or a domain name
@@ -19,14 +18,11 @@ impl IpfsApi {
         let endpoint = "api/v0/name/resolve";
         let url = format!("http://{}:{}/{}", self.server, self.port, endpoint);
         let resp = ureq::post(&url).query("arg", name).call()?;
-        let resp: serde_json::Value = serde_json::from_reader(resp.into_reader())?;
+        let resp: Value = serde_json::from_reader(resp.into_reader())?;
 
-        if resp["Path"].is_string() {
-            return Ok(resp["Path"].as_str().unwrap().into());
+        match &resp["Path"] {
+            Value::String(x) => Ok(x.into()),
+            _ => Err(StrError::from_str("Response does not contain 'Path'")),
         }
-
-        Err(StrError::from_str(
-            "Response does not contain a string key called 'Path'.",
-        ))
     }
 }

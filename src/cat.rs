@@ -1,6 +1,5 @@
 use crate::IpfsApi;
 use std::io::Read;
-use ureq;
 
 impl IpfsApi {
     /// Retrieves the contents of a file from the IPFS network. Takes a
@@ -16,13 +15,17 @@ impl IpfsApi {
     /// println!("{}", hello_string);
     /// # Ok::<(), Box<dyn std::error::Error>>(())
     /// ```
-    pub fn cat(&self, hash: &str) -> Result<impl Iterator<Item = u8>, ureq::Error> {
+    pub fn cat(
+        &self,
+        hash: &str,
+    ) -> Result<impl Iterator<Item = u8>, ureq::Error> {
+        crate::rand::feed_event("cat");
         let url = format!("http://{}:{}/api/v0/cat", self.server, self.port);
         let req = ureq::post(&url).query("arg", hash);
         let resp = req.call()?;
         let bytes = resp.into_reader().bytes();
 
-        Ok(bytes.filter(|x| x.is_ok()).map(|x| x.unwrap()))
+        Ok(bytes.filter_map(std::result::Result::ok))
     }
 }
 
@@ -38,11 +41,9 @@ mod tests {
         let bytes = api
             .cat("QmWATWQ7fVPP2EFGu71UkfnqhYXDYH566qy47CnJDgvs8u")
             .unwrap();
+        let bytes = bytes.collect::<Vec<u8>>();
 
-        assert_eq!(
-            "Hello World\n".as_bytes().to_vec(),
-            bytes.collect::<Vec<u8>>()
-        );
+        assert_eq!(b"Hello World\n", bytes.as_slice());
     }
 
     #[test]

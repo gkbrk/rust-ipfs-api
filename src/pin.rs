@@ -19,22 +19,6 @@ pub struct PinnedHash {
 }
 
 impl IpfsApi {
-    /// Tells the IPFS server to pin the given object.
-    /// If 'recursive' is true, it will recursively pin all objects
-    /// that one depends on.
-    /// If 'progress' is true, it will return a percentage(?) progress
-    /// if the object has not been already pinned, or None if it has.
-    pub fn pin_add(&self, hash: &str, recursive: bool) -> Result<PinResponse, Error> {
-        let mut url = self.get_url()?;
-        url.set_path("api/v0/pin/add");
-        url.query_pairs_mut()
-            .append_pair("arg", hash)
-            .append_pair("recursive", &recursive.to_string())
-            .append_pair("progress", "false");
-        let resp = reqwest::get(url)?;
-        Ok(serde_json::from_reader(resp)?)
-    }
-
     /// Unpin the given object.
     pub fn pin_rm(&self, hash: &str, recursive: bool) -> Result<PinResponse, Error> {
         let mut url = self.get_url()?;

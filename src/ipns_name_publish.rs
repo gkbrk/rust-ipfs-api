@@ -1,6 +1,5 @@
 use crate::IpfsApi;
 use std::error::Error;
-use ureq;
 
 impl IpfsApi {
     /// Publish an IPFS hash in IPNS.

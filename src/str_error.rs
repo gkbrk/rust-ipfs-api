@@ -7,7 +7,7 @@ pub struct StrError<'a> {
 
 impl<'a> StrError<'a> {
     pub fn from_str(error: &str) -> Box<StrError> {
-        Box::new(StrError { msg: error.into() })
+        Box::new(StrError { msg: error })
     }
 }
 
